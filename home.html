@@ -1,0 +1,13 @@
+<div class="appGrid">
+	<ul class="appList" ng-repeat="item in appList">
+		<li>
+			<div class="" style="height:120px; width:120px; border-style: solid;border: 1px solid black;margin: 10px;">
+				<center>
+					<i class="icon {{item.icon}}"></i> 
+					<a href="#/{{item.routeName}}" >{{item.text}}</a>
+					<div style="font-size:small" ng-bind-html="item.description"/>
+				</center>
+			</div>
+		</li>
+	</ul>
+</div>

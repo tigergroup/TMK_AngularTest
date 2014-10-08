@@ -1,0 +1,360 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Globe Life</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <!-- ionic css -->
+    <link href="css/ionic.css" rel="stylesheet">
+	
+	<!-- your app's css -->
+    <link href="css/app.css" rel="stylesheet">
+
+    <!-- ionic/angularjs scripts -->
+    <script src="js/ionic.js"></script>
+    <script src="js/angular/angular.js"></script>
+    <script src="js/angular/angular-animate.js"></script>
+    <script src="js/angular/angular-route.js"></script>
+    <script src="js/angular/angular-touch.js"></script>
+    <script src="js/angular/angular-sanitize.js"></script>
+    <script src="js/ionic-angular.js"></script>
+
+    <!-- cordova script -->
+    <script src="cordova.js"></script>
+
+    <style>
+      .fade-bar {
+        height: 0px;
+        width: 100%;
+        position: fixed;
+        z-index: 9999;
+        opacity: 0;
+        background-color: #000;
+      }
+    </style>
+	
+	<base href="/">
+	
+  </head>
+
+  <!-- 'starter' is the name of this angular module (js/app.js)-->
+  <body ng-app="starter">
+    <div ng-controller="MenuCtrl">
+      <side-menus>
+        <fade-bar></fade-bar>
+        <pane side-menu-content>
+          <header class="bar bar-header bar-positive">
+            <button class="button button-icon" ng-click="openLeft()"><i class="icon ion-navicon"></i></button>
+            <h1 class="title">Globe Life</h1>
+          </header>
+          <content has-header="true" padded="true">
+
+            <div class="list card">
+
+					<div id="main">
+						
+						<script type="text/ng-template" id="home.html">
+                            <div class="appGrid" >
+                                <ul class="appList" ng-repeat="item in appList">
+                                    <li>
+                                        <div class="" style="height:120px; width:120px; border-style: solid;border: 1px solid black;margin: 10px;">
+                                            <center>
+                                                <i class="icon {{item.icon}}"></i>
+                                                <a href="#/{{item.routeName}}">{{item.text}}</a>
+                                                <div style="font-size:small" ng-bind-html="item.description" />
+                                            </center>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+						</script>
+						
+						<!-- angular templating -->
+							<!-- this is where content will be injected -->
+						<div ng-view></div>
+					
+					</div>
+
+
+              <div class="item tabs tabs-secondary tabs-icon-left">
+				<button class="button button-icon" ng-click="GetFactoryValue()">test</button>
+                <a class="tab-item" href="#">
+                  <i class="icon ion-thumbsup" ></i>
+                  Like
+                </a>
+                <a class="tab-item" href="#">
+                  <i class="icon ion-android-add-contact"></i>
+                  Feedback
+                </a>
+                <a class="tab-item" href="#">
+                  <i class="icon ion-android-forums"></i>
+                  Chat
+                </a>
+              </div>
+
+            </div>
+          </content>
+        </pane>
+        <side-menu side="left">
+          <header class="bar bar-header bar-dark" fade-header>
+            <!---<h1 class="title">Left</h1>--->
+			<ion-nav-back-button class="button-clear"
+				ng-click="goBack()">
+				<i class="ion-ios7-locked"></i> Sign Out
+			</ion-nav-back-button>
+  
+          </header>
+          <content has-header="true">
+            <ul class="list">
+              <a href="#" class="item" ng-repeat="item in list">
+				<i class="icon {{item.icon}}"></i> 
+                {{item.text}}
+              </a>
+            </ul>
+          </content>
+        </side-menu>
+        <!--<side-menu side="right">
+          <header class="bar bar-header bar-dark">
+            <h1 class="title">Right</h1>
+          </header>
+          <content>
+            <ul class="list">
+              <a href="#" class="item" ng-repeat="item in list">
+                {{item.text}}
+              </a>
+            </ul>
+          </content>
+        </side-menu>-->
+      </side-menus>
+    </div>
+    <script>
+      var mainMod = angular.module('starter', ['ionic'])
+	  .config(['$routeProvider', '$locationProvider','$provide', function($routeProvider, $locationProvider, $provide) {
+			$routeProvider
+				.when('/', {
+					templateUrl: "home.html",
+					controller: "homeController"
+				})
+				.when('/account', {
+					templateUrl: "account.html",
+					controller: "accountController"
+				})
+				/*.when('/private', {
+					templateUrl: "private.html",
+					controller: PrivateController,
+					resolve: {
+						factory: checkRouting
+					}
+				})
+				.when('/private/anotherpage', {
+					templateUrl:"another-private.html",
+					controller: AnotherPriveController,
+					resolve: {
+						factory: checkRouting
+					}
+				})*/
+				.otherwise({ redirectTo: '/' });
+			
+			$provide.provider('greeting', function() {
+				var text = 'Hello, ';
+          
+				
+				this.setText = function(value) {
+					text = value;
+				};
+				
+				/*
+				this.$get = function() {
+				  /*return function(name) {
+					alert(text + name);
+				  };
+				  
+				  
+				  return {
+						sayHello: function(name) {
+							alert("Hello, " + name + "!")
+						};
+					}
+				   
+				   
+				};*/
+				
+				this.$get = function($http, $q){
+						return {
+						sayHello: function(name) {
+							alert(text + name + "!")
+						},
+						setText: function(value) {
+							text = value;
+						},
+						  callItunes: function(){
+							makeUrl();
+							var deferred = $q.defer();
+							$http({
+							  method: 'JSONP',
+							  url: _finalUrl
+							}).success(function(data){
+							  deferred.resolve(data);
+							}).error(function(){
+							  deferred.reject('There was an error')
+							})
+							return deferred.promise;
+						  },
+						  setArtist: function(artist){
+							_artist = artist;
+						  },
+						  getArtist: function(){
+							return _artist;
+						  },
+						  thingOnConfig: this.thingFromConfig
+						}
+					  }
+					  
+			  });
+  
+			// use the HTML5 History API
+			$locationProvider.html5Mode(true);
+		}])
+		
+		.controller('homeController', function($scope, $route) {
+			$scope.appList = [];
+			$scope.currentPage  = $route.current.templateUrl;
+			//alert($scope.currentPage)
+			$scope.appList.push({text: 'YOUR BILLS', icon:'ion-card', description:'$70.15<br>Next bill due on<br><b>11/15/2014</b>', routeName:'bills'});
+			$scope.appList.push({text: 'POLICY INFO', icon:'ion-android-note', description:'', routeName:'policy'});
+			$scope.appList.push({text: 'CLAIMS', icon:'ion-clipboard', description:'', routeName:'claims'});
+			$scope.appList.push({text: 'NOTIFICATION CENTER', icon:'ion-android-lightbulb', description:'', routeName:'notification'});
+			$scope.appList.push({text: 'MY ACCOUNT', icon:'ion-android-social-user', description:'', routeName:'account'});
+						
+		})
+		
+		.controller('accountController', function($scope, $route, $injector) {
+			$scope.currentPage  = $route.current.templateUrl;
+			
+			if($scope.sideMenuController.isOpen())
+				$scope.openLeft();
+			
+			var greeting = $injector.get('greeting');
+			greeting.setText("Hey Bro,  it's ");
+			
+
+			//greeting.sayHello('Ford Prefect');
+			
+						
+			//$scope.userId = 'ctvu@torchmarkcorp.com';
+		})
+		
+		/*
+		.controller('mainController', function($scope) {
+			
+		}
+		*/
+      .controller('MenuCtrl', function($scope, greeting) {
+        $scope.list = [];
+		$scope.accountInfo = {userId:'ctvu@torchmarkcorp.com', firstName: 'Chris', lastName: 'Vu'};
+		
+		//greeting.setText("Just another day, ");
+		//greeting.sayHello('Chris Vu');
+				  
+		//$scope.currentPage = "";
+		/*
+        for(var i = 0; i < 20; i++) {
+          $scope.list.push({
+            text: 'Item ' + i
+          });
+        }
+		*/
+		
+		$scope.list.push({text: 'HOME', icon:'ion-home'});
+		$scope.list.push({text: 'YOUR BILLS', icon:'ion-card'});
+		$scope.list.push({text: 'POLICY INFO', icon:'ion-android-note'});
+		$scope.list.push({text: 'CLAIMS', icon:'ion-clipboard'});
+		$scope.list.push({text: 'NOTIFICATION CENTER', icon:'ion-android-lightbulb', description:''});
+		$scope.list.push({text: 'MY ACCOUNT', icon:'ion-android-social-user'});
+		$scope.list.push({text: 'CONTACT US', icon:'ion-android-friends'});
+		
+		
+			
+		/*
+		for(var x = 0; x < 5; x++) {
+          $scope.appList.push({
+            text: 'App ' + x
+          });
+        }
+		*/
+		
+		
+		
+        $scope.openLeft = function() {
+			//alert($scope.sideMenuController.isOpen())
+			//if($scope.sideMenuController.isOpen())
+				$scope.sideMenuController.toggleLeft();
+        };
+		
+		$scope.openRightSideMenu = function() {
+          $scope.sideMenuController.toggleRight();
+        };
+		
+		$scope.test = function(safeFactory){
+			alert(safeValue);
+			//alert(0);
+		};
+      })
+
+      .directive('fadeBar', function($timeout) {
+        return {
+          restrict: 'E',
+          template: '<div class="fade-bar"></div>',
+          replace: true,
+          link: function($scope, $element, $attr) {
+            $timeout(function() {
+              $scope.$watch('sideMenuController.getOpenRatio()', function(ratio) {
+                $element[0].style.opacity = Math.abs(ratio);
+              });
+            });
+          }
+        }
+      });
+	  
+	  /*
+	  mainMod.provider('greeting', function() {
+		  var text = 'Hello, ';
+			  
+		  this.setText = function(value) {
+			text = value;
+		  };
+			  
+		  this.$get = function() {
+			return function(name) {
+			  alert(text + name);
+			};
+		  };
+		});
+
+mainMod.config(function(greetingProvider) {
+  greetingProvider.setText("Howdy there Chris, ");
+});
+
+mainMod.run(function(greeting) {
+  greeting('Ford Prefect');
+});
+	
+		mainMod.factory("myFactory", function() {
+			return "a value";
+		});
+
+
+		mainMod.controller("MenuCtrl", ['$scope', 'myFactory', function (p1, p2) {
+			
+			p1.GetFactoryValue = function(){
+				console.log(p2);
+			};
+
+		}]);*/
+		
+		
+    </script>
+  </body>
+</html>
+
